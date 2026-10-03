@@ -1,10 +1,15 @@
 package dev.chaunm.infrastructure;
 
+import dev.chaunm.exception.ServerException;
+import dev.chaunm.exception.connection.ConnectionNotFoundException;
+import dev.chaunm.exception.connection.RequestReadException;
+import dev.chaunm.exception.request.ClientDisconnectedException;
+import dev.chaunm.exception.request.EmptyRequestException;
+import dev.chaunm.exception.request.InvalidRequestException;
 import dev.chaunm.util.JsonException;
 import dev.chaunm.util.JsonUtil;
 
 import java.io.BufferedReader;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -21,23 +26,28 @@ public class SocketManagement {
         this.connections = new HashMap<>();
     }
 
-    public Request getRequest(Socket socket) throws IOException {
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-        String json = reader.readLine();
+    public Request getRequest(Socket socket) throws ServerException {
+        String json;
+        try {
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+            json = reader.readLine();
+        } catch (IOException e) {
+            throw new RequestReadException(e);
+        }
         if (json == null) {
-            throw new EOFException("Client disconnected before sending its request");
+            throw new ClientDisconnectedException();
         }
 
         Request request;
         try {
             request = JsonUtil.fromJson(json, Request.class);
         } catch (JsonException e) {
-            throw new IOException("Client sent an invalid request", e);
+            throw new InvalidRequestException(e);
         }
 
         if (request == null) {
-            throw new IOException("Client sent an empty request");
+            throw new EmptyRequestException();
         }
 
         long clientId = request.clientId() == null
@@ -51,15 +61,15 @@ public class SocketManagement {
         connections.remove(id);
     }
 
-    public void sendResponse(long clientId, Response<?> response) throws IOException {
+    public void sendResponse(long clientId, Response<?> response) throws ServerException {
         Connection connection = connections.get(clientId);
         if (connection == null) {
-            throw new IOException("No connection found for client " + clientId);
+            throw new ConnectionNotFoundException(clientId);
         }
         connection.sendResponse(response);
     }
 
-    public void sendResponses(List<Long> clientIds, Response<?> response) throws IOException {
+    public void sendResponses(List<Long> clientIds, Response<?> response) throws ServerException {
         for (long clientId : clientIds) {
             sendResponse(clientId, response);
         }

@@ -1,14 +1,18 @@
 package dev.chaunm;
 
+import java.io.IOException;
+
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
         String host = "localhost";
         int port = 5000;
 
-        Client client = new Client();
-        client.connect(host, port);
-        client.sendMessage("Hello, Server!");
+        try (Client client = new Client()) {
+            client.connect(host, port);
+            client.sendLoginRequest("An");
 
-        client.waitForResponse();
+            String response = client.waitForResponse();
+            System.out.println("Received from server: " + response);
+        }
     }
 }

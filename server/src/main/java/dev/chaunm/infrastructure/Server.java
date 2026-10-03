@@ -21,18 +21,18 @@ public class Server {
             Logger.info("Server started on port " + DEFAULT_PORT);
 
             while (true) {
-                Socket socket = serverSocket.accept();
-                Request request = socketManagement.getRequest(socket);
-
-                handleRequest(request);
+                waitThenHandleRequest(serverSocket);
             }
         } catch (IOException e) {
             Logger.error("Error occurred while starting server: " + e.getMessage());
         }
     }
 
-    private void handleRequest(Request request) throws IOException {
+    private void waitThenHandleRequest(ServerSocket serverSocket) throws IOException {
         try {
+            Socket socket = serverSocket.accept();
+            Request request = socketManagement.getRequest(socket);
+
             Handler handler = HandlerFactory.createHandler(request.command());
             HandlerResult<?> result = handler.handle(request);
             socketManagement.sendResponses(result.responseReceivers(), result.response());
