@@ -1,4 +1,4 @@
-package dev.chaunm.infrastructure;
+package dev.chaunm.protocol;
 
 import dev.chaunm.handler.login.LoginHandler;
 

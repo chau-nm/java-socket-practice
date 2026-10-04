@@ -1,4 +1,4 @@
-package dev.chaunm.infrastructure;
+package dev.chaunm.protocol;
 
 public record Request(Long clientId, Command command, Object data) {
 

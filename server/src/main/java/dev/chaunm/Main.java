@@ -1,6 +1,6 @@
 package dev.chaunm;
 
-import dev.chaunm.infrastructure.Server;
+import dev.chaunm.protocol.Server;
 
 public class Main {
     public static void main(String[] args) {

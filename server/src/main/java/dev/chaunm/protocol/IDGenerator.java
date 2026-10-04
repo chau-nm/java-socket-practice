@@ -1,4 +1,4 @@
-package dev.chaunm.infrastructure;
+package dev.chaunm.protocol;
 
 public class IDGenerator {
     private static long ID = 0;

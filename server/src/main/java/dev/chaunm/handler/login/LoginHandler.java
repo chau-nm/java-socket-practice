@@ -1,10 +1,10 @@
 package dev.chaunm.handler.login;
 
-import dev.chaunm.infrastructure.Handler;
-import dev.chaunm.infrastructure.HandlerResult;
-import dev.chaunm.infrastructure.Request;
-import dev.chaunm.infrastructure.Response;
-import dev.chaunm.infrastructure.ResponseStatus;
+import dev.chaunm.protocol.Handler;
+import dev.chaunm.protocol.HandlerResult;
+import dev.chaunm.protocol.Request;
+import dev.chaunm.protocol.Response;
+import dev.chaunm.protocol.ResponseStatus;
 import dev.chaunm.exception.ServerException;
 import dev.chaunm.exception.handler.InvalidRequestDataException;
 import dev.chaunm.exception.handler.MissingClientIdException;

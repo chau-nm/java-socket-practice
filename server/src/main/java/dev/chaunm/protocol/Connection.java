@@ -1,4 +1,4 @@
-package dev.chaunm.infrastructure;
+package dev.chaunm.protocol;
 
 import java.io.*;
 import java.net.Socket;

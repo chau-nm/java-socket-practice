@@ -1,18 +1,28 @@
 package dev.chaunm;
 
+import dev.chaunm.protocol.SocketClient;
+import dev.chaunm.storage.AuthStorage;
+import dev.chaunm.view.LoginView;
+import dev.chaunm.view.RootView;
+
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String host = "localhost";
-        int port = 5000;
+        Scanner scanner = new Scanner(System.in);
 
-        try (Client client = new Client()) {
-            client.connect(host, port);
-            client.sendLoginRequest("An");
+        AuthStorage authStorage = new AuthStorage();
 
-            String response = client.waitForResponse();
-            System.out.println("Received from server: " + response);
-        }
+        String socketHost = "localhost";
+        int socketPort = 5000;
+        SocketClient socketClient = new SocketClient();
+        socketClient.connect(socketHost, socketPort);
+
+        LoginView loginView = new LoginView(socketClient, authStorage, scanner);
+
+        new RootView(
+                loginView
+        ).render();
     }
 }
