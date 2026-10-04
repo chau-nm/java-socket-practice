@@ -6,6 +6,7 @@ import dev.chaunm.exception.connection.RequestReadException;
 import dev.chaunm.exception.request.ClientDisconnectedException;
 import dev.chaunm.exception.request.EmptyRequestException;
 import dev.chaunm.exception.request.InvalidRequestException;
+import dev.chaunm.log.Logger;
 import dev.chaunm.util.JsonException;
 import dev.chaunm.util.JsonUtil;
 
@@ -53,6 +54,7 @@ public class SocketManagement {
         long clientId = request.clientId() == null
                 ? IDGenerator.generateID()
                 : request.clientId();
+        Logger.info("Received request: " + request.command() + " from clientId: " + clientId);
         connections.put(clientId, new Connection(socket));
         return request.withClientId(clientId);
     }

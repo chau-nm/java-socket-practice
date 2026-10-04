@@ -16,7 +16,7 @@ import java.util.List;
 public class LoginHandler implements Handler {
 
     @Override
-    public HandlerResult<String> handle(Request request) throws ServerException {
+    public HandlerResult<LoginResponseData> handle(Request request) throws ServerException {
         if (request.clientId() == null) {
             throw new MissingClientIdException();
         }
@@ -33,9 +33,9 @@ public class LoginHandler implements Handler {
         String name = data == null || data.name() == null || data.name().isBlank()
                 ? "there"
                 : data.name();
-        Response<String> response = new Response<>(
+        Response<LoginResponseData> response = new Response<>(
                 ResponseStatus.OK,
-                "Hello, " + name + "!"
+                new LoginResponseData(request.clientId(), name)
         );
         return new HandlerResult<>(List.of(request.clientId()), response);
     }

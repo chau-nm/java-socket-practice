@@ -1,6 +1,7 @@
 package dev.chaunm.view;
 
 import dev.chaunm.dto.request.LoginRequestData;
+import dev.chaunm.dto.response.LoginResponseData;
 import dev.chaunm.protocol.Command;
 import dev.chaunm.protocol.Request;
 import dev.chaunm.protocol.Response;
@@ -26,8 +27,9 @@ public class LoginView {
         System.out.print("Please enter your name:");
         String name = scanner.nextLine();
         socketClient.sendRequest(new Request(null, Command.LOGIN, new LoginRequestData(name)));
-        Response<String> response = socketClient.waitForResponse(String.class);
-        System.out.println(response.data());
+        Response<LoginResponseData> response = socketClient.waitForResponse(LoginResponseData.class);
+        authStorage.save(response.data().id(), response.data().name());
+        System.out.println("Login successful! Welcome, " + response.data().name() + " (" + response.data().id() + ") !");
     }
 
 }
