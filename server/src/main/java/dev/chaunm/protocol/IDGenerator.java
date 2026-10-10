@@ -1,9 +1,11 @@
 package dev.chaunm.protocol;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class IDGenerator {
-    private static long ID = 0;
+    private static final AtomicLong ID = new AtomicLong();
 
     public static long generateID() {
-        return ++ID;
+        return ID.incrementAndGet();
     }
 }

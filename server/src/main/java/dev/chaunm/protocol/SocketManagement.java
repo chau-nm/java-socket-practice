@@ -5,21 +5,17 @@ import dev.chaunm.log.Logger;
 import dev.chaunm.util.JsonException;
 import dev.chaunm.util.JsonUtil;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SocketManagement {
 
     private final Map<Long, Connection> connections;
 
     public SocketManagement() {
-        this.connections = new HashMap<>();
+        this.connections = new ConcurrentHashMap<>();
     }
 
     public Request getRequest(String json, Socket socket) throws ServerException {
@@ -56,7 +52,12 @@ public class SocketManagement {
 
     public void sendResponses(List<Long> clientIds, Response<?> response) throws ServerException {
         for (long clientId : clientIds) {
-            sendResponse(clientId, response);
+            // Keep going if one receiver fails, so the others still get the message
+            try {
+                sendResponse(clientId, response);
+            } catch (ServerException e) {
+                Logger.warn("Failed to send response to client " + clientId + ": " + e.getMessage());
+            }
         }
     }
 }

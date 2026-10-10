@@ -1,14 +1,14 @@
 package dev.chaunm.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class UserManagement {
     private final List<User> users;
 
     public UserManagement() {
-        users = new ArrayList<>();
+        users = new CopyOnWriteArrayList<>();
     }
 
     public void add(User user) {

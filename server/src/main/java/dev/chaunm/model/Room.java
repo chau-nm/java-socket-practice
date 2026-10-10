@@ -1,15 +1,16 @@
 package dev.chaunm.model;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Room {
     private final List<User> members;
     private final List<Message> messages;
 
     public Room() {
-        this.members = new ArrayList<>();
-        this.messages = new ArrayList<>();
+        this.members = new CopyOnWriteArrayList<>();
+        this.messages = new CopyOnWriteArrayList<>();
     }
 
     public List<Message> getMessages() {
@@ -26,5 +27,9 @@ public class Room {
 
     public List<Long> getMemberIds() {
         return members.stream().map(User::id).toList();
+    }
+
+    public Optional<User> getMember(long userId) {
+        return members.stream().filter(u -> u.id() == userId).findFirst();
     }
 }

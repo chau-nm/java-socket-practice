@@ -27,14 +27,14 @@ public class JoinRoomView {
     public void render() throws IOException {
         System.out.println("There are 5 room: 1, 2, 3, 4, 5");
         System.out.print("Please choose one room: ");
-        long roomId = scanner.nextLong();
-        System.out.println(roomId);
+        long roomId = Long.parseLong(scanner.nextLine().trim());
 
         socketClient.sendRequest(new Request(authStorage.getId(), Command.JOIN_ROOM, new JoinRoomRequestData(roomId)));
         Response<JoinRoomResponseData> response = socketClient.waitForResponse(JoinRoomResponseData.class);
+        authStorage.saveRoom(roomId);
 
         List<Message> messages = response.data().messages();
         System.out.println("Welcome to join room: " + roomId);
-        messages.forEach(Message::render);
+        System.out.println("There are " + messages.size() + " previous messages.");
     }
 }

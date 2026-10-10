@@ -39,23 +39,25 @@ public class Server {
     }
 
     private void handleRequest(Socket socket) {
-        try {
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8)
-            );
+        try (socket; BufferedReader reader = new BufferedReader(
+                new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8))) {
 
             String json;
             while ((json = reader.readLine()) != null) {
-                Request request = socketManagement.getRequest(json, socket);
+                // Catch per request so one bad request doesn't drop the whole connection
+                try {
+                    Request request = socketManagement.getRequest(json, socket);
 
-                Handler handler = HandlerFactory.createHandler(request.command(), chat, userManagement);
-                HandlerResult<?> result = handler.handle(request);
-                socketManagement.sendResponses(result.responseReceivers(), result.response());
+                    Handler handler = HandlerFactory.createHandler(request.command(), chat, userManagement);
+                    HandlerResult<?> result = handler.handle(request);
+                    socketManagement.sendResponses(result.responseReceivers(), result.response());
+                } catch (ServerException e) {
+                    Logger.warn("Request handling failed: " + e.getMessage());
+                }
             }
-        } catch (ServerException e) {
-            Logger.warn("Request handling failed: " + e.getMessage());
+            Logger.info("Client disconnected");
         } catch (IOException e) {
-            Logger.error("Error occurred while starting server: " + e.getMessage());
+            Logger.warn("Client connection error: " + e.getMessage());
         }
     }
 }

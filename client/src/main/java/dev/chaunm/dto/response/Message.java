@@ -1,9 +1,9 @@
 package dev.chaunm.dto.response;
 
-public record Message(User sender, String message, long timestamp) {
+public record Message(User sender, String content, long timestamp) {
 
     public void render() {
-        System.out.println(String.format("%l - %s: %s ( %s )", sender.id(), sender.name(), message, String.valueOf(timestamp)));
+        System.out.printf("%d - %s: %s ( %d )%n", sender.id(), sender.name(), content, timestamp);
     }
 
 }
