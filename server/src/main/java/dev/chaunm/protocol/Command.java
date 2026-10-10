@@ -1,5 +1,6 @@
 package dev.chaunm.protocol;
 
 public enum Command {
-    LOGIN
+    LOGIN,
+    JOIN_ROOM
 }

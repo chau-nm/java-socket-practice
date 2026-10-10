@@ -28,7 +28,6 @@ public class SocketClient {
     public void sendRequest(Request request) throws IOException {
         ensureConnected();
         String jsonRequest = JsonUtil.toJson(request);
-        System.out.println("Sending request: " + jsonRequest);
         writer.write(jsonRequest);
         writer.newLine();
         writer.flush();

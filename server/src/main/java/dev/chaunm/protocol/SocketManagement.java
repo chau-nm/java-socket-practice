@@ -1,11 +1,6 @@
 package dev.chaunm.protocol;
 
 import dev.chaunm.exception.ServerException;
-import dev.chaunm.exception.connection.ConnectionNotFoundException;
-import dev.chaunm.exception.connection.RequestReadException;
-import dev.chaunm.exception.request.ClientDisconnectedException;
-import dev.chaunm.exception.request.EmptyRequestException;
-import dev.chaunm.exception.request.InvalidRequestException;
 import dev.chaunm.log.Logger;
 import dev.chaunm.util.JsonException;
 import dev.chaunm.util.JsonUtil;
@@ -27,28 +22,16 @@ public class SocketManagement {
         this.connections = new HashMap<>();
     }
 
-    public Request getRequest(Socket socket) throws ServerException {
-        String json;
-        try {
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
-            json = reader.readLine();
-        } catch (IOException e) {
-            throw new RequestReadException(e);
-        }
-        if (json == null) {
-            throw new ClientDisconnectedException();
-        }
-
+    public Request getRequest(String json, Socket socket) throws ServerException {
         Request request;
         try {
             request = JsonUtil.fromJson(json, Request.class);
         } catch (JsonException e) {
-            throw new InvalidRequestException(e);
+            throw new ServerException("Client sent an invalid request", e);
         }
 
         if (request == null) {
-            throw new EmptyRequestException();
+            throw new ServerException("Client sent an empty request");
         }
 
         long clientId = request.clientId() == null
@@ -66,7 +49,7 @@ public class SocketManagement {
     public void sendResponse(long clientId, Response<?> response) throws ServerException {
         Connection connection = connections.get(clientId);
         if (connection == null) {
-            throw new ConnectionNotFoundException(clientId);
+            throw new ServerException("No connection found for client " + clientId);
         }
         connection.sendResponse(response);
     }

@@ -2,6 +2,7 @@ package dev.chaunm;
 
 import dev.chaunm.protocol.SocketClient;
 import dev.chaunm.storage.AuthStorage;
+import dev.chaunm.view.JoinRoomView;
 import dev.chaunm.view.LoginView;
 import dev.chaunm.view.RootView;
 
@@ -20,9 +21,11 @@ public class Main {
         socketClient.connect(socketHost, socketPort);
 
         LoginView loginView = new LoginView(socketClient, authStorage, scanner);
+        JoinRoomView joinRoomView = new JoinRoomView(socketClient, authStorage, scanner);
 
         new RootView(
-                loginView
+                loginView,
+                joinRoomView
         ).render();
     }
 }

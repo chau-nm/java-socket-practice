@@ -5,8 +5,6 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import dev.chaunm.util.JsonUtil;
 import dev.chaunm.exception.ServerException;
-import dev.chaunm.exception.connection.ConnectionRegistrationException;
-import dev.chaunm.exception.connection.ResponseSendException;
 
 public class Connection {
     private final PrintWriter writer;
@@ -16,14 +14,14 @@ public class Connection {
             this.writer = new PrintWriter(
                     new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
         } catch (IOException e) {
-            throw new ConnectionRegistrationException(e);
+            throw new ServerException("Failed to register client connection", e);
         }
     }
 
     public void sendResponse(Response<?> response) throws ServerException {
         writer.println(JsonUtil.toJson(response));
         if (writer.checkError()) {
-            throw new ResponseSendException(new IOException("Output stream reported an error"));
+            throw new ServerException("Failed to send response to client", new IOException("Output stream reported an error"));
         }
     }
 }
